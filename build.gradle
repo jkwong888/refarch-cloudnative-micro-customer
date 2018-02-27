@@ -51,7 +51,7 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-actuator")
     //testCompile("junit:junit")
     //testCompile("org.springframework.boot:spring-boot-starter-test")
-    compile group: 'com.cloudant', name:'cloudant-client', version: '2.7.0'
+    compile group: 'com.cloudant', name:'cloudant-spring-boot-starter', version: '0.0.2'
     testCompile('junit:junit:[4,)')
 }
 

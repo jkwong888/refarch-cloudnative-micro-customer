@@ -16,7 +16,7 @@ export JAVA_OPTS="${JAVA_OPTS} -Xmx${max_heap}m"
 export JAVA_OPTS="${JAVA_OPTS} -Djava.security.egd=file:/dev/./urandom"
 
 # Load agent support if required
-source ./agents/newrelic.sh
+#source ./agents/newrelic.sh
 
 # open the secrets
 if [ ! -z "${HS256_KEY}" ]; then
@@ -24,26 +24,16 @@ if [ ! -z "${HS256_KEY}" ]; then
 else
   hs256_key=`cat /var/run/secrets/hs256-key/key`
 fi
-
-if [ -z "${couchdb}" ]; then
-    echo "Error: couchdb is not defined in environment!"
-    exit 1
-fi
-
-cloudant_username=`echo ${couchdb} | jq -r '.username'`
-cloudant_password=`echo ${couchdb} | jq -r '.password'`
-cloudant_host=`echo ${couchdb} | jq -r  '.host'`
-cloudant_port=`echo ${couchdb} | jq -r '.port'`
-cloudant_proto=`echo ${couchdb} |jq -r '.url' | sed -e 's|://.*||'`
-
-JAVA_OPTS="${JAVA_OPTS} -Dspring.application.cloudant.username=${cloudant_username} -Dspring.application.cloudant.password=${cloudant_password} -Dspring.application.cloudant.host=${cloudant_host} -Dspring.application.cloudant.port=${cloudant_port} -Dspring.application.cloudant.protocol=${cloudant_proto}"
 JAVA_OPTS="${JAVA_OPTS} -Djwt.sharedSecret=${hs256_key}"
 
-# disable eureka
-JAVA_OPTS="${JAVA_OPTS} -Deureka.client.enabled=false -Deureka.client.registerWithEureka=false -Deureka.fetchRegistry=false"
+if [ ! -z "${couchdb}" ]; then
+  cloudant_username=`echo ${couchdb} | jq -r '.username'`
+  cloudant_password=`echo ${couchdb} | jq -r '.password'`
+  cloudant_url=`echo ${couchdb} | jq -r  '.url'`
+  JAVA_OPTS="${JAVA_OPTS} -Dcloudant.username=${cloudant_username} -Dcloudant.password=${cloudant_password} -Dcloudant.url=${cloudant_url}"
+fi
 
 echo "Starting with Java Options ${JAVA_OPTS}"
 
 # Start the application
 exec java ${JAVA_OPTS} -jar /app.jar
-

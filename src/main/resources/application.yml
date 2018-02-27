@@ -1,24 +1,14 @@
+# disable eureka by default
 eureka:
-  instance:
-     preferIpAddress: true
-  client:
-    serviceUrl:
-       defaultZone: http://microservices-refapp-eureka-chrisking.mybluemix.net/eureka/
+  enabled: false
+  registerWithEureka: false
+  fetchRegistry: false
 
 # Server configuration
 server:
   context-path: /micro
   port: 8080
 
-# Spring properties
-spring:
-  application:
-     name: customer-microservice
-     
-     cloudant:
-        protocol: https
-        username: 
-        password: 
-        host: 
-        port: 443
-        database: customers
+# use customers db
+cloudant:
+  db: customers
